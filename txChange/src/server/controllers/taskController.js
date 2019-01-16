@@ -1,10 +1,9 @@
 const db = require('../models/database')
 
 module.exports = {
-  // 
+  // gets all transactions for specified user id
   getAllUserTransactions(req, res, next) {
     const userId = req.params.id;
-    console.log(userId);
 
     db.query(
       `SELECT * FROM history WHERE user_id = $1`, userId
@@ -32,5 +31,12 @@ module.exports = {
     .then(response => console.log(response))
     .then(next())
     .catch(err => console.log(err))
+  },
+  getUserData(req, res, next) {
+    db.query(
+      `SELECT * FROM users`
+      )
+    .then(response => console.log(response))
+    next()
   }
 }

@@ -4,27 +4,7 @@ const bcrypt = require('bcryptjs');
 const saltRounds = 10
 
 module.exports = {
-  authenticateUser(req, res, next) {
-    const { email, password } = req.body;
-    let hash;
-
-    db.query(
-      `SELECT password FROM users WHERE email = $1`, email
-    )
-    .then(response => {
-      hash = response[0].password
-      bcrypt.compare(password, hash, (err, res) => {
-        if (res !== true) {
-          // send message that username and password DO NOT match
-          console.log('denied')
-        } else {
-          // give user access
-          console.log('welcome')
-        }
-      });
-    })
-    next();
-  },
+  // inserts new user into db with encrypted password
   createNewUser(req, res, next) {
     // destructure user info from req.body object
     const { 
@@ -46,12 +26,27 @@ module.exports = {
     });
     next()
   },
-  getUserData(req, res, next) {
+  // checks inputted password against stored, encrypted password
+  authenticateUser(req, res, next) {
+    const { email, password } = req.body;
+    let hash;
+
     db.query(
-      `SELECT * FROM users`
-      )
-    .then(response => console.log(response))
-    next()
+      `SELECT password FROM users WHERE email = $1`, email
+    )
+    .then(response => {
+      hash = response[0].password
+      bcrypt.compare(password, hash, (err, res) => {
+        if (res !== true) {
+          // send message that username and password DO NOT match
+          console.log('denied')
+        } else {
+          // give user access
+          console.log('welcome')
+        }
+      });
+    })
+    next();
   }
 }
 
