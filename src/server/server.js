@@ -5,13 +5,14 @@ const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
 const authController = require('./controllers/authController');
-const taskController = require('./controllers/taskController')
+const taskController = require('./controllers/taskController');
+const cookieController = require('./controllers/cookieController');
 
 const app = express();
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }));
-
+app.use(cookieParser());
 
 const PORT = 5000;
 
@@ -19,13 +20,14 @@ app.use('/', express.static('dist'))
 
 app.use('/signup', express.static(path.resolve(__dirname, '../signup.html')));
 
-// post: create new user
+// post: creates a new user. requires 'email', 'password', 'homeCountry' from client
 app.post('/createUser',
   authController.createNewUser,
+  cookieController.setCookie,
   (req, res) => {
     res.send();
 })
-// get: user login
+// get: user login. requires email and password
 app.post('/login',
   authController.authenticateUser,
   (req, res) => {
@@ -39,6 +41,19 @@ app.get('/testRoute',
     res.send('you hit it!')
 })
 
+// post: record transaction
+app.post('/recordTransaction', 
+  taskController.recordTransaction,
+  (req, res) => {
+  res.send()
+})
+
+// get: return all user transactions
+app.get('/txHistory/:id', 
+  taskController.getAllUserTransactions,
+  (req, res) => {
+})
+
 // get: user data
 
 // post: create new user
@@ -48,11 +63,5 @@ app.get('/testRoute',
 // post: user can favorite a country
 
 // delete: user can unFavorite a country
-
-// post: record transaction
-
-// get: return all transactions
-
-
 
 app.listen(PORT, () => console.log(`Server is listening on Port ${PORT}`));
