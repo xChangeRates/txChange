@@ -1,3 +1,6 @@
+dist
+package-lock.json
+.env
 # OSX
 #
 .DS_Store
