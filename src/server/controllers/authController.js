@@ -6,6 +6,7 @@ const saltRounds = 10
 module.exports = {
   authenticateUser(req, res, next) {
     const { email, password } = req.body;
+    email = email.toLowerCase();
     let hash;
 
     db.query(
@@ -32,6 +33,7 @@ module.exports = {
       password,
       country
     } = req.body;
+    email = email.toLowerCase();
     // create hash using plain text password
     bcrypt.hash(password, saltRounds, (err, hash) => {
       // save user to db, saving encrypted password

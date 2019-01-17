@@ -1,5 +1,7 @@
 const express = require('express');
 
+const { google } = require('googleapis')
+
 const path = require('path');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -14,7 +16,7 @@ app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-const PORT = 5000;
+const PORT = 8080;
 
 app.use('/', express.static('dist'))
 
@@ -35,7 +37,7 @@ app.post('/login',
 })
 
 // get: country data
-app.get('/testRoute',
+app.get('/google',
   authController.getUserData,
   (req, res) => {
     res.send('you hit it!')
@@ -53,6 +55,38 @@ app.get('/txHistory/:id',
   taskController.getAllUserTransactions,
   (req, res) => {
 })
+
+
+// const oauth2Client = new google.auth.OAuth2(
+//   '43404633949-35k8ru9jcgb1k7r68uj6du05050142qb.apps.googleusercontent.com',
+//   'zruCHOKK-rTB4YisbogoMvSQ',
+//   'http://127.0.0.1:5000/login/google/callback'
+// )
+
+// const SCOPE = [
+//   "https://www.googleapis.com/auth/contacts.readonly",
+//   "https://www.googleapis.com/auth/userinfo.email",
+//   "https://www.googleapis.com/auth/userinfo.profile "
+// ];
+
+// const url = oauth2Client.generateAuthUrl({
+//   access_type: 'offline',
+//   scope: SCOPE
+// })
+
+
+
+// const setGoogleCredentials = async (req, res, next) => {
+//   const { code } = req.query;
+//   if (!code) return res.status(400).send('invalid response');
+//   else {
+//     const { tokens } = await oauth2Client.getToken(code);
+//     oauth2Client.setCredentials(tokens);
+//     next();
+//   }
+// }
+
+// app.get('/login/google/callback', )
 
 // get: user data
 
