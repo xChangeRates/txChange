@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, TextInput, Image, TouchableOpacity} from 'react-native';
+import { View, Text, StyleSheet, TextInput, Image } from 'react-native';
 import { TextField } from 'react-native-material-textfield';
 import { Button } from 'react-native-material-ui';
 
@@ -20,7 +20,9 @@ class Profile extends Component {
   constructor(props) {
     super(props);
   }
+  
   render() {
+    console.log(this.props.handleAuth)
     const active = (
       <View
       style={{
@@ -30,30 +32,34 @@ class Profile extends Component {
           label='Email'
           // value={this.state.inputAmount}
           placeholder='Enter email'
-          // onChangeText={this.props.handleChange('inputAmount')}
+          onChangeText={this.props.handleLogin('emailText')}
         /> 
         <TextField
           label='Password'
           // value={this.state.inputAmount}
           placeholder='Enter password'
-          // onChangeText={this.props.handleChange('inputAmount')}
+          onChangeText={this.props.handleLogin('passwordText')}
         /> 
         <Text></Text>
         <View style={styles.buttonContainer}>
-        <Button style={{ container: { 
+        <Button 
+        style={{ container: { 
           backgroundColor: 'rgb(0, 188, 212)', 
           width: '30%', 
           marginLeft: '15%', 
         }}} 
           text='Sign Up' 
-        />
-        {/* <Text></Text> */}
-        <Button style={{ container: { 
-          backgroundColor: 'rgb(0, 188, 212)', 
-          width: '30%', 
-          marginRight: '15%'
-        }}} 
+        /> 
+        /* <Text></Text>
+        <Button 
+          style={{ container: { 
+            backgroundColor: 'rgb(0, 188, 212)', 
+            width: '30%', 
+            marginRight: '15%'
+          }}} 
           text='Log In' 
+          // title="Log In"
+          onPress={() => {console.log('press')}}
         />
         </View>
         <View style={styles.container}>

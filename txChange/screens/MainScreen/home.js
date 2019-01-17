@@ -25,10 +25,12 @@ class Home extends Component {
           <Dropdown
             label = 'Home Country'
             data = {countryList}
+            onChangeText={this.props.selectCountry('homeCountry')}
           />
           <Dropdown
             label = 'Destination Country'
             data = {countryList}
+            onChangeText={this.props.selectCountry('foreignCountry')}
           />
           <TextField
             label='Amount'
@@ -49,7 +51,7 @@ class Home extends Component {
             marginLeft: '55%', 
             marginRight: '5%'}}} 
             text='Calculate' 
-            onClick={this.props.handleCalculate}
+            onPress={this.props.handleCalculate}
           />
       </View>
     )

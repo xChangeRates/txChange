@@ -42,11 +42,11 @@ module.exports = {
   },
 
   getRate(req, res, next) {
-    const { home, foreign } = req.body;
-    console.log('home ', home);
-    console.log('req.body ', req.body)
+    const { home, foreign } = req.query;
+    console.log('req.query: ', req.query);
     axios.get(`http://apilayer.net/api/live?access_key=${keys.accessKey}&source=${home}&currencies=${foreign}&format=1`)
       .then(data => {
+        console.log('data is ', data);
         let rate = Object.values(data.data.quotes)[0]
         res.locals.rate = rate
         next();
@@ -54,7 +54,7 @@ module.exports = {
   },
 
   getTaxRate(req, res, next) {
-    const { currencyCode } = req.body;
+    const { currencyCode } = req.query;
     db.query(
       `SELECT id, tax_rate FROM countries WHERE currency_code = $1`, currencyCode
     )

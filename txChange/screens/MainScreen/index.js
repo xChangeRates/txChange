@@ -4,7 +4,7 @@ import { BottomNavigation } from 'react-native-material-ui';
 import History from './history';
 import Home from './home';
 import Profile from './profile';
-
+const axios = require('axios')
 
 const styles = StyleSheet.create({
   container: {
@@ -31,60 +31,81 @@ class MainScreen extends Component {
         homeCountry: '',
         total: 0,
         fxRate: 0,
+        emailText: '',
+        passwordText: '',
     }
+
+    this.handleLogin = this.handleLogin.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleCalculate = this.handleCalculate.bind(this);
+    this.selectCountry = this.selectCountry.bind(this);
+    this.handleAuth = this.handleAuth.bind(this);
+  }
+
+  handleLogin = name => event => {
+    this.setState({
+      [name]: event
+    })
+  }
+
+  handleAuth() {
+    console.log('authenticating');
+    axios.post('http://localhost:5000/login', {
+      email: this.state.emailText,
+      password: this.state.passwordText
+    })
+    .then(response => console.log('handleAuth response is: ', response))
+  }
+
+  selectCountry = name => event => {
+        // console.log('event.slice(0, 3) is ', event.slice(0, 3))
+    this.setState({
+      [name]: event.slice(0, 3),
+    })
   }
 
   handleChange = name => event => {
-    console.log('Number(event) is ', Number(event))
-    // let number = event;
-    // number = number.toFixed(2);
     this.setState({
       [name]: Number(event),
     })
   }
 
   handleCalculate() {
-    console.log('calculating');
-    // console.log('this.inputAmount is ', this.inputAmount)
-    // return this.inputAmount
-    console.log(this.state);
-    let data = { home: this.state.homeCountry.slice(0, 3), foreign: this.state.foreignCountry.slice(0,3)}
     let total; 
-    fetch('http://localhost5000/getRate', {
-      method:'GET',
-      body: JSON.stringify(data),  
-    }).then(res => res.json())
-    .then((rate) => {
-      console.log('FX rate in calculate is ', fxRate);
+    axios.get('http://localhost:5000/getRate', {
+      params: {
+        home: this.state.homeCountry,
+        foreign: this.state.foreignCountry
+      }
+    })
+    .then(responseRate => {
+      let rate = responseRate.data.rate;
       this.setState({
         fxRate: rate
-      });
-      fetch('http://localhost5000/getTaxRate', {
-        method: 'GET',
-        body: JSON.stringify({currencyCode: this.foreignCountry.slice(0, 3)}),
-      }).then(res => res.json())
-      .then((result) => {
-        const { id, taxRate } = result;
-        total = this.state.inputAmount * (1 + this.state.inputTip * 0.01) * rate * taxRate
+      })
+      axios.get('http://localhost:5000/getTaxRate', {
+        params: {
+          currencyCode: this.state.foreignCountry
+        }
+      })
+      .then(responseTax => {
+        let taxRate = responseTax.data.taxRate
+        total = this.state.inputAmount * (1 + this.state.inputTip * 0.01) * rate * (1 + taxRate * 0.01)
         this.setState({
           total: total
         })
-        if (this.user !== null) {
-          fetch('http://localhost5000/recordTransaction', {
-            method: 'POST',
-            body: JSON.stringify({
-              userId: this.user, 
+        if (this.state.user) {
+          axios.post('http://localhost:5000/recordTransaction', {
+              userId: this.state.user, 
               countryId: id, 
               timestamp: new Date(),
               conversionRate: this.state.fxRate,
-              transaction: total
-            }),
-          }).then((res) => console.log('response is: ', res))
+              transaction: total              
+          })
+          .then(response => console.log(response))
         }
-      }) 
-    })
+      })
+    });
   }
 
   render(){
@@ -92,10 +113,10 @@ class MainScreen extends Component {
 
     return (
       <View style={styles.container}>
-        <Home active={active} user={user} inputAmount={inputAmount} inputTip={inputTip} foreignCountry={foreignCountry} homeCountry={homeCountry} total={total} fxRate={fxRate} handleChange={this.handleChange} handleCalculate={this.handleCalculate} />
-        <History active={active}/>
-        <Profile active={active} />
-        <View style={styles.bottom}>
+        <Home active={active} user={user} inputAmount={inputAmount} inputTip={inputTip} foreignCountry={foreignCountry} homeCountry={homeCountry} total={total} fxRate={fxRate} selectCountry={this.selectCountry} handleChange={this.handleChange} handleCalculate={this.handleCalculate} />
+        <History active={active} user={user} />
+        <Profile active={active} handleLogin={this.handleLogin} user={user} handleAuth={this.handleAuth} />
+        <View style={styles.bottom} >
         <BottomNavigation style={{ container: {
           backgroundColor: 'rgb(0, 188, 212)',
           // position: 'absolute',
