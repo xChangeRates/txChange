@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, StyleSheet, TextInput, Image, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TextInput} from 'react-native';
 import { Dropdown } from 'react-native-material-dropdown';
 import { TextField } from 'react-native-material-textfield';
 import { Button } from 'react-native-material-ui';
@@ -14,19 +14,6 @@ const countryList = [
   {value: 'CHF Swiss Franc'},
   {value: 'CNY Yuan'}
 ]
-
-const getRate = () => {
-  fetch('http://apilayer.net/api/live?access_key=41b9d3d7f088cbd5dc6d7f2f78a17dc8')
-    .then(res => res.json())
-    .then(data => {
-      let result = Object.values(data.quotes)[0]
-      console.log('fetch data.quotes[0] result is: ', result)
-      return result;
-    })
-}
-
-let rate = getRate();
-
 
 class Home extends Component {
   constructor(props) {
@@ -62,14 +49,10 @@ class Home extends Component {
             marginLeft: '55%', 
             marginRight: '5%'}}} 
             text='Calculate' 
+            onClick={this.props.handleCalculate}
           />
-          <View>
-            {rate}
-
-          </View>
       </View>
     )
-    
     return (
       <View>
         {this.props.active === 'home' ? active : <Text>Home Not Active</Text>}

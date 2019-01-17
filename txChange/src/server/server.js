@@ -67,20 +67,16 @@ app.get('/txHistory/:id',
 
 // get: user to calculate conversion
   // params: currency_code (home) and currency_code(foreign)
-// app.get('/getRate', taskController.getRate, (req, res) => {
-//   console.log(res)
-//   res.send()
-// })
+app.get('/getRate', taskController.getRate, (req, res) => {
+  // console.log('res.locals.rate is: ', res.locals.rate)
+  res.send({rate: res.locals.rate})
+})
 
-// app.get('fetch', (req, res) => {
-//   fetch('http://apilayer.net/api/live?access_key=41b9d3d7f088cbd5dc6d7f2f78a17dc8')
-//     .then(response => response.json)
-//     .then(data => {
-//       let result = Object.values(data.quotes)[0];
-//       res.send(result);
-//     }) 
-// })
-
+app.get('/getTaxRate', taskController.getTaxRate, (req, res) => {
+  console.log('res.locals.id is ', res.locals.id);
+  console.log('res.locals.taxRate: ', 'res.locals.taxRate', res.locals.taxRate);
+  res.send({id: res.locals.id, taxRate: res.locals.taxRate})
+})
 
 
 app.listen(PORT, () => console.log(`Server is listening on Port ${PORT}`));
