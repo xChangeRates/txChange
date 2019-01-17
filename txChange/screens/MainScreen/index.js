@@ -6,7 +6,6 @@ import Home from './home';
 import Profile from './profile';
 
 
-
 const styles = StyleSheet.create({
   container: {
     marginTop: '20%',

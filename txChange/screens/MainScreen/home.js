@@ -15,6 +15,19 @@ const countryList = [
   {value: 'CNY Yuan'}
 ]
 
+const getRate = () => {
+  fetch('http://apilayer.net/api/live?access_key=41b9d3d7f088cbd5dc6d7f2f78a17dc8')
+    .then(res => res.json())
+    .then(data => {
+      let result = Object.values(data.quotes)[0]
+      console.log('fetch data.quotes[0] result is: ', result)
+      return result;
+    })
+}
+
+let rate = getRate();
+
+
 class Home extends Component {
   constructor(props) {
     super(props);
@@ -50,6 +63,10 @@ class Home extends Component {
             marginRight: '5%'}}} 
             text='Calculate' 
           />
+          <View>
+            {rate}
+
+          </View>
       </View>
     )
     
