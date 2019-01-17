@@ -21,12 +21,12 @@ class History extends Component {
   }
 
   render() {
-    const state = this.state;
+    const { tableHead, tableData, widthArr } = this.state;
     const active = (
       <View style={styles.container}>
         <Table borderStyle={{borderWidth: 0.5, borderColor: '#c8e1ff'}}>
-          <Row data={state.tableHead} widthArr={state.widthArr} style={styles.head} textStyle={styles.text}/>
-          <Rows data={state.tableData} widthArr={state.widthArr} style={styles.row} textStyle={styles.text}/>
+          <Row data={tableHead} widthArr={widthArr} style={styles.head} textStyle={styles.text}/>
+          <Rows data={tableData} widthArr={widthArr} style={styles.row} textStyle={styles.text}/>
           {/* <Rows data={state.tableData} textStyle={styles.text}/> */}
         </Table>
       </View>

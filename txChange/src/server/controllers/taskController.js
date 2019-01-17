@@ -1,8 +1,7 @@
 const db = require('../models/database')
-const dotenv = require('dotenv');
-dotenv.config();
+const axios = require('axios')
 
-const accessKey = process.env.access_key
+const keys = require('../config/keys')
 
 module.exports = {
   // 
@@ -17,6 +16,10 @@ module.exports = {
 
     next()
   },
+  getCountryId(req, res, next) {
+    const currencyCode = req.params.foreignCountry
+  },
+
   recordTransaction(req, res, next) {
     console.log(req.body)
     const { 
@@ -37,15 +40,30 @@ module.exports = {
     .then(next())
     .catch(err => console.log(err))
   },
-  
-  // getRate(req, res, next) {
-  //   // const { home, foreign } = req.body;  
-  //   // fetch(`http://apilayer.net/api/live?${accessKey}&source=${home}&currencies=${foreign}&format=1`)
-  //   //   .then((response) => response.json())
-  //   //   .then((data) => {
-  //   //     res.locals.rate = Object.values(data.quotes)[0];
-  //   //     next();
-  //   //   })
 
-  // }
+  getRate(req, res, next) {
+    const { home, foreign } = req.body;
+    console.log('home ', home);
+    console.log('req.body ', req.body)
+    axios.get(`http://apilayer.net/api/live?access_key=${keys.accessKey}&source=${home}&currencies=${foreign}&format=1`)
+      .then(data => {
+        let rate = Object.values(data.data.quotes)[0]
+        res.locals.rate = rate
+        next();
+      })
+  },
+
+  getTaxRate(req, res, next) {
+    const { currencyCode } = req.body;
+    db.query(
+      `SELECT id, tax_rate FROM countries WHERE currency_code = $1`, currencyCode
+    )
+    .then(result => {
+      console.log('result[0] is', result[0]);
+      res.locals.id = result[0].id;
+      res.locals.taxRate = result[0].tax_rate*1;
+      next();
+    })
+    .catch(err => console.log(err));
+  }
 }

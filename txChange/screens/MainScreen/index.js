@@ -24,15 +24,20 @@ class MainScreen extends Component {
     super(props);
     this.state = {
         active: 'home',
+        user: null,
         inputAmount: 0,
         inputTip: 0,
-        destCountry : '',
+        foreignCountry : '',
         homeCountry: '',
+        total: 0,
+        fxRate: 0,
     }
+    this.handleChange = this.handleChange.bind(this);
+    this.handleCalculate = this.handleCalculate.bind(this);
   }
 
   handleChange = name => event => {
-    console.log('typeof event', Number(event))
+    console.log('Number(event) is ', Number(event))
     // let number = event;
     // number = number.toFixed(2);
     this.setState({
@@ -40,16 +45,54 @@ class MainScreen extends Component {
     })
   }
 
-  render(){
-    const { active, inputAmount, inputTip, destCountry, homeCountry } = this.state;
+  handleCalculate() {
+    console.log('calculating');
+    // console.log('this.inputAmount is ', this.inputAmount)
+    // return this.inputAmount
+    console.log(this.state);
+    let data = { home: this.state.homeCountry.slice(0, 3), foreign: this.state.foreignCountry.slice(0,3)}
+    let total; 
+    fetch('http://localhost5000/getRate', {
+      method:'GET',
+      body: JSON.stringify(data),  
+    }).then(res => res.json())
+    .then((rate) => {
+      console.log('FX rate in calculate is ', fxRate);
+      this.setState({
+        fxRate: rate
+      });
+      fetch('http://localhost5000/getTaxRate', {
+        method: 'GET',
+        body: JSON.stringify({currencyCode: this.foreignCountry.slice(0, 3)}),
+      }).then(res => res.json())
+      .then((result) => {
+        const { id, taxRate } = result;
+        total = this.state.inputAmount * (1 + this.state.inputTip * 0.01) * rate * taxRate
+        this.setState({
+          total: total
+        })
+        if (this.user !== null) {
+          fetch('http://localhost5000/recordTransaction', {
+            method: 'POST',
+            body: JSON.stringify({
+              userId: this.user, 
+              countryId: id, 
+              timestamp: new Date(),
+              conversionRate: this.state.fxRate,
+              transaction: total
+            }),
+          }).then((res) => console.log('response is: ', res))
+        }
+      }) 
+    })
+  }
 
-    // const countryItems = Object.keys(currencyMap).map(currency => {
-    //   return <Picker.Item key={currency} value={currency} label={currencyMap[currency].label}/>
-    // })
+  render(){
+    const { active, user, inputAmount, inputTip, foreignCountry, homeCountry, total, fxRate } = this.state;
 
     return (
       <View style={styles.container}>
-        <Home active={active} inputAmount={inputAmount}inputTip={inputTip} destCountry={destCountry} homeCountry={homeCountry} handleChange={this.handleChange}/>
+        <Home active={active} user={user} inputAmount={inputAmount} inputTip={inputTip} foreignCountry={foreignCountry} homeCountry={homeCountry} total={total} fxRate={fxRate} handleChange={this.handleChange} handleCalculate={this.handleCalculate} />
         <History active={active}/>
         <Profile active={active} />
         <View style={styles.bottom}>
