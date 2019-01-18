@@ -56,38 +56,6 @@ app.get('/txHistory/:id',
   (req, res) => {
 })
 
-
-// const oauth2Client = new google.auth.OAuth2(
-//   '43404633949-35k8ru9jcgb1k7r68uj6du05050142qb.apps.googleusercontent.com',
-//   'zruCHOKK-rTB4YisbogoMvSQ',
-//   'http://127.0.0.1:5000/login/google/callback'
-// )
-
-// const SCOPE = [
-//   "https://www.googleapis.com/auth/contacts.readonly",
-//   "https://www.googleapis.com/auth/userinfo.email",
-//   "https://www.googleapis.com/auth/userinfo.profile "
-// ];
-
-// const url = oauth2Client.generateAuthUrl({
-//   access_type: 'offline',
-//   scope: SCOPE
-// })
-
-
-
-// const setGoogleCredentials = async (req, res, next) => {
-//   const { code } = req.query;
-//   if (!code) return res.status(400).send('invalid response');
-//   else {
-//     const { tokens } = await oauth2Client.getToken(code);
-//     oauth2Client.setCredentials(tokens);
-//     next();
-//   }
-// }
-
-// app.get('/login/google/callback', )
-
 // get: user data
 
 // post: create new user

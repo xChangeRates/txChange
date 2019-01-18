@@ -18,21 +18,6 @@ const people = google.people({
 })
 
 module.exports = {
-  async googleOauth(req, res, next) {
-    const { code } = req.query;
-    if (!code) return res.status(400).send('invalid response');
-    else {
-      const { tokens } = await oauth2Client.getToken(code);
-      oauth2Client.setCredentials(tokens);
-  
-      const userInfo = await people.people.get({
-        resourceName: "people/me",
-        personFields: 'names,emailAddresses'
-      })
-      console.log(userInfo.data.emailAddresses)
-    }
-    next();
-  },
   generateUrl(req, res, next) {
     const SCOPE = [
       "https://www.googleapis.com/auth/contacts.readonly",
@@ -45,5 +30,21 @@ module.exports = {
     })
     res.locals.url = url;
     next()
+  },
+  async googleOauth(req, res, next) {
+    const { code } = req.query;
+    if (!code) return res.status(400).send('invalid response');
+    else {
+      const { tokens } = await oauth2Client.getToken(code);
+      oauth2Client.setCredentials(tokens);
+  
+      const userInfo = await people.people.get({
+        resourceName: "people/me",
+        personFields: 'names,emailAddresses'
+      })
+      const email = userInfo.data.emailAddresses[0].value;
+      console.log(tokens);
+    }
+    next();
   }
 }
